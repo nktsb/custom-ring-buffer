@@ -39,20 +39,18 @@ ring_buffer_st * ringBufferInit(size_t element_size, unsigned length)
 
 ring_buff_err_t ringBufferDeinit(ring_buffer_st *buffer)
 {
-	if (buffer == NULL) return ERR_RING_BUFF_NULL;
+	if(buffer == NULL) return ERR_RING_BUFF_NULL;
 
 	ringBufferClear(buffer);
 	free(buffer->data);
-	buffer->data = NULL;
 	free(buffer);
-	buffer = NULL;
 
 	return RING_BUFF_OK;
 }
 
 ring_buff_err_t ringBufferClear(ring_buffer_st* buffer)
 {
-	if (buffer == NULL) return ERR_RING_BUFF_NULL;
+	if(buffer == NULL) return ERR_RING_BUFF_NULL;
 
 	buffer->input = 0;
 	buffer->output = 0;
@@ -62,7 +60,7 @@ ring_buff_err_t ringBufferClear(ring_buffer_st* buffer)
 
 int ringBufferGetAvail(ring_buffer_st *buffer)
 {
-	if (buffer == NULL) return -1;
+	if(buffer == NULL) return -1;
 
 	return (buffer->input >= buffer->output)? 
 			buffer->input - buffer->output : ((buffer->length - buffer->output) + buffer->input);
@@ -70,9 +68,8 @@ int ringBufferGetAvail(ring_buffer_st *buffer)
 
 ring_buff_err_t ringBufferPutSymbol(ring_buffer_st* buffer, void *data)
 {
-	if (buffer == NULL) return ERR_RING_BUFF_NULL;
-
-	if((buffer->length - ringBufferGetAvail(buffer)) < 1) return ERR_RING_BUFF_FULL;
+	if(buffer == NULL) return ERR_RING_BUFF_NULL;
+	if(buffer->length == ringBufferGetAvail(buffer)) return ERR_RING_BUFF_FULL;
 
 	void *last_data_ptr = buffer->data + (buffer->input * buffer->element_size); 
 	memcpy(last_data_ptr, data, buffer->element_size);
@@ -85,7 +82,7 @@ ring_buff_err_t ringBufferPutSymbol(ring_buffer_st* buffer, void *data)
 
 ring_buff_err_t ringBufferPutData(ring_buffer_st *buffer, void *data, unsigned data_len)
 {
-	if (buffer == NULL) return ERR_RING_BUFF_NULL;
+	if(buffer == NULL) return ERR_RING_BUFF_NULL;
 	if((buffer->length - ringBufferGetAvail(buffer)) < data_len) return ERR_RING_BUFF_FULL;
 
 	while(data_len)
@@ -105,10 +102,8 @@ ring_buff_err_t ringBufferPutData(ring_buffer_st *buffer, void *data, unsigned d
 
 ring_buff_err_t ringBufferGetSymbol(ring_buffer_st* buffer, void *data)
 {
-	if (buffer == NULL) return ERR_RING_BUFF_NULL;
-
-	if(buffer->input == buffer->output)
-		return ERR_RING_BUFF_EMPTY;
+	if(buffer == NULL) return ERR_RING_BUFF_NULL;
+	if(ringBufferGetAvail(buffer) == 0) return ERR_RING_BUFF_EMPTY;
 
 	void *last_data_ptr = buffer->data + (buffer->output * buffer->element_size); 
 	memcpy(data, last_data_ptr, buffer->element_size);
