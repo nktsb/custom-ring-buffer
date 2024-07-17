@@ -24,7 +24,6 @@ ring_buffer_st * ringBufferInit(size_t element_size, unsigned length)
 	if(buffer->data == NULL)
 	{
 		free(buffer);
-		buffer = NULL;
 		return NULL;
 	}
 
