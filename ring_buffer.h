@@ -17,6 +17,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
     extern "C" {
@@ -94,6 +95,14 @@ ring_buff_err_t ringBufferPutData(ring_buffer_st *buffer, void *data, unsigned d
  * @return Error code indicating the result of the operation.
  */
 ring_buff_err_t ringBufferGetData(ring_buffer_st *buffer, void *data, unsigned data_len);
+
+/**
+ * @brief Checks if there are available elements in the ring buffer.
+ *
+ * @param buffer Pointer to the ring buffer.
+ * @return True if there is data in the ring buffer, false otherwise.
+ */
+static inline bool ringBufferIsData(ring_buffer_st *buffer) { return (buffer->input != buffer->output); }
 
 /**
  * @brief Gets the number of available elements in the ring buffer.
