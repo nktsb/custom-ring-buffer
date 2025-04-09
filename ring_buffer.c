@@ -59,7 +59,7 @@ ring_buff_err_t ringBufferClear(ring_buffer_st* buffer)
 
 int ringBufferGetAvail(ring_buffer_st *buffer)
 {
-	if(buffer == NULL) return -1;
+	if(buffer == NULL) return ERR_RING_BUFF_NULL;
 
 	return (buffer->input >= buffer->output)? 
 			buffer->input - buffer->output : ((buffer->length - buffer->output) + buffer->input);
