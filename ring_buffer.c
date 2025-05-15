@@ -16,12 +16,12 @@
 ring_buffer_st * ringBufferInit(size_t element_size, unsigned length)
 {
 	ring_buffer_st *buffer = malloc(sizeof(ring_buffer_st));
-	if(buffer == NULL) return NULL;
+	if (buffer == NULL) return NULL;
 
 	memset((void*)buffer, 0, sizeof(ring_buffer_st));
 
 	buffer->data = malloc(length * element_size);
-	if(buffer->data == NULL)
+	if (buffer->data == NULL)
 	{
 		free(buffer);
 		return NULL;
@@ -38,7 +38,7 @@ ring_buffer_st * ringBufferInit(size_t element_size, unsigned length)
 
 ring_buff_err_t ringBufferDeinit(ring_buffer_st *buffer)
 {
-	if(buffer == NULL) return ERR_RING_BUFF_NULL;
+	if (buffer == NULL) return ERR_RING_BUFF_NULL;
 
 	ringBufferClear(buffer);
 	free(buffer->data);
@@ -49,7 +49,7 @@ ring_buff_err_t ringBufferDeinit(ring_buffer_st *buffer)
 
 ring_buff_err_t ringBufferClear(ring_buffer_st* buffer)
 {
-	if(buffer == NULL) return ERR_RING_BUFF_NULL;
+	if (buffer == NULL) return ERR_RING_BUFF_NULL;
 
 	buffer->input = 0;
 	buffer->output = 0;
@@ -59,18 +59,21 @@ ring_buff_err_t ringBufferClear(ring_buffer_st* buffer)
 
 int ringBufferGetAvail(ring_buffer_st *buffer)
 {
-	if(buffer == NULL) return ERR_RING_BUFF_NULL;
+	if (buffer == NULL) return ERR_RING_BUFF_NULL;
 
 	return (buffer->input >= buffer->output)? 
-			buffer->input - buffer->output : ((buffer->length - buffer->output) + buffer->input);
+			buffer->input - buffer->output : 
+			((buffer->length - buffer->output) + buffer->input);
 }
 
 ring_buff_err_t ringBufferPutSymbol(ring_buffer_st* buffer, void *data)
 {
-	if(buffer == NULL) return ERR_RING_BUFF_NULL;
-	if(buffer->length == ringBufferGetAvail(buffer)) return ERR_RING_BUFF_FULL;
+	if (buffer == NULL) return ERR_RING_BUFF_NULL;
+	if (buffer->length == ringBufferGetAvail(buffer))
+		return ERR_RING_BUFF_FULL;
 
-	void *last_data_ptr = buffer->data + (buffer->input * buffer->element_size); 
+	void *last_data_ptr = buffer->data + 
+			(buffer->input * buffer->element_size); 
 	memcpy(last_data_ptr, data, buffer->element_size);
 
 	buffer->input += 1;
@@ -79,17 +82,25 @@ ring_buff_err_t ringBufferPutSymbol(ring_buffer_st* buffer, void *data)
 	return RING_BUFF_OK;
 }
 
-ring_buff_err_t ringBufferPutData(ring_buffer_st *buffer, void *data, unsigned data_len)
+ring_buff_err_t ringBufferPutData(ring_buffer_st *buffer, void *data, 
+		unsigned data_len)
 {
-	if(buffer == NULL) return ERR_RING_BUFF_NULL;
-	if((buffer->length - ringBufferGetAvail(buffer)) < data_len) return ERR_RING_BUFF_FULL;
+	if (buffer == NULL) return ERR_RING_BUFF_NULL;
 
-	while(data_len)
+	if ((buffer->length - ringBufferGetAvail(buffer)) < data_len)
+		return ERR_RING_BUFF_FULL;
+
+	while (data_len)
 	{
 		unsigned round_max_len = (buffer->length - buffer->input);
-		unsigned round_len = (data_len > round_max_len)? round_max_len: data_len;
+		unsigned round_len = (data_len > round_max_len)? 
+				round_max_len : 
+				data_len;
 		
-		memcpy((void*)(buffer->data + (buffer->input * buffer->element_size)), (void*)data, (round_len * buffer->element_size));
+		memcpy((void*)(buffer->data + 
+				(buffer->input * buffer->element_size)), 
+				(void*)data, (round_len * buffer->element_size));
+
 		data += round_len * buffer->element_size;
 		data_len -= round_len;
 
@@ -101,10 +112,11 @@ ring_buff_err_t ringBufferPutData(ring_buffer_st *buffer, void *data, unsigned d
 
 ring_buff_err_t ringBufferGetSymbol(ring_buffer_st* buffer, void *data)
 {
-	if(buffer == NULL) return ERR_RING_BUFF_NULL;
-	if(ringBufferGetAvail(buffer) == 0) return ERR_RING_BUFF_EMPTY;
+	if (buffer == NULL) return ERR_RING_BUFF_NULL;
+	if (ringBufferGetAvail(buffer) == 0) return ERR_RING_BUFF_EMPTY;
 
-	void *last_data_ptr = buffer->data + (buffer->output * buffer->element_size); 
+	void *last_data_ptr = buffer->data + 
+			(buffer->output * buffer->element_size); 
 	memcpy(data, last_data_ptr, buffer->element_size);
 
 	buffer->output += 1;
@@ -113,17 +125,23 @@ ring_buff_err_t ringBufferGetSymbol(ring_buffer_st* buffer, void *data)
 	return RING_BUFF_OK;
 }
 
-ring_buff_err_t ringBufferGetData(ring_buffer_st *buffer, void *data, unsigned data_len)
+ring_buff_err_t ringBufferGetData(ring_buffer_st *buffer, void *data, 
+		unsigned data_len)
 {
 	if (buffer == NULL) return ERR_RING_BUFF_NULL;
-	if(ringBufferGetAvail(buffer) < data_len) return ERR_RING_BUFF_EMPTY;
+	if (ringBufferGetAvail(buffer) < data_len) return ERR_RING_BUFF_EMPTY;
 
-	while(data_len)
+	while (data_len)
 	{
 		unsigned round_max_len = (buffer->length - buffer->output);
-		unsigned round_len = (data_len > round_max_len)? round_max_len: data_len;
+		unsigned round_len = (data_len > round_max_len)? 
+				round_max_len : 
+				data_len;
 		
-		memcpy((void*)data, (void*)(buffer->data + (buffer->output * buffer->element_size)), (round_len * buffer->element_size));
+		memcpy((void*)data, (void*)(buffer->data + 
+				(buffer->output * buffer->element_size)), 
+				(round_len * buffer->element_size));
+
 		data += round_len * buffer->element_size;
 		data_len -= round_len;
 

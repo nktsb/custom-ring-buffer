@@ -26,19 +26,19 @@
 // Structure representing the ring buffer
 typedef struct
 {
-    unsigned length;       // Total length of the buffer
-    unsigned input;        // Index for the next input position
-    unsigned output;       // Index for the next output position
-    void *data;           // Pointer to the buffer data
-    size_t element_size;  // Size of each element in the buffer (in bytes)
+	unsigned length;	// Total length of the buffer
+	unsigned input;		// Index for the next input position
+	unsigned output;	// Index for the next output position
+	void *data;		// Pointer to the buffer data
+	size_t element_size;	// Size of each element in the buffer (in bytes)
 } ring_buffer_st;
 
 // Enumeration for ring buffer error codes
 typedef enum {
-    ERR_RING_BUFF_NULL = -3, // Error: buffer is NULL
-    ERR_RING_BUFF_EMPTY,      // Error: buffer is empty
-    ERR_RING_BUFF_FULL,       // Error: buffer is full
-    RING_BUFF_OK              // Operation successful
+    ERR_RING_BUFF_NULL = -3,	// Error: buffer is NULL
+    ERR_RING_BUFF_EMPTY,	// Error: buffer is empty
+    ERR_RING_BUFF_FULL,		// Error: buffer is full
+    RING_BUFF_OK		// Operation successful
 } ring_buff_err_t;
 
 /**
@@ -84,7 +84,8 @@ ring_buff_err_t ringBufferGetSymbol(ring_buffer_st* buffer, void *data);
  * @param data_len Number of elements to add.
  * @return Error code indicating the result of the operation.
  */
-ring_buff_err_t ringBufferPutData(ring_buffer_st *buffer, void *data, unsigned data_len);
+ring_buff_err_t ringBufferPutData(ring_buffer_st *buffer, void *data, 
+		unsigned data_len);
 
 /**
  * @brief Retrieves multiple elements from the ring buffer.
@@ -94,7 +95,8 @@ ring_buff_err_t ringBufferPutData(ring_buffer_st *buffer, void *data, unsigned d
  * @param data_len Number of elements to retrieve.
  * @return Error code indicating the result of the operation.
  */
-ring_buff_err_t ringBufferGetData(ring_buffer_st *buffer, void *data, unsigned data_len);
+ring_buff_err_t ringBufferGetData(ring_buffer_st *buffer, void *data, 
+		unsigned data_len);
 
 /**
  * @brief Checks if there are available elements in the ring buffer.
@@ -102,7 +104,10 @@ ring_buff_err_t ringBufferGetData(ring_buffer_st *buffer, void *data, unsigned d
  * @param buffer Pointer to the ring buffer.
  * @return True if there is data in the ring buffer, false otherwise.
  */
-static inline bool ringBufferIsData(ring_buffer_st *buffer) { return (buffer->input != buffer->output); }
+static inline bool ringBufferIsData(ring_buffer_st *buffer) 
+{
+	return (buffer->input != buffer->output);
+}
 
 /**
  * @brief Gets the number of available elements in the ring buffer.
